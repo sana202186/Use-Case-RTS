@@ -1,1 +1,61 @@
 # Use-Case-RTS
+Overview
+This project automates the cleaning, merging, semantic classification and analyisi of two datasets — one containing content metadata (Tags.csv) and another with performance metrics (Mesures.csv).
+Workflow Summary
+Data Loading
+Two CSV files are loaded:
+•	Mesures.csv → Contains performance data.
+•	Tags.csv → Contains descriptive metadata.
+metrics = pd.read_csv("sample_data/Mesures.csv", encoding="latin-1", sep=";")
+tags = pd.read_csv("sample_data/Tags.csv", encoding="latin-1", sep=";")
+Data Cleaning
+•	Removes leading/trailing spaces in column names and cell values.
+•	Drops empty rows.
+•	Standardizes Segment ID as string keys for merging.
+•	Converts percentage and time columns to numeric format:
+o	"New Visit Rate %" → float
+o	"Avg Play Duration" and "Total Play Duration" → seconds
+Merge Datasets
+The two datasets are merged using the unique key Segment ID.
+merged = pd.merge(metrics, tags[['Segment ID', 'Assigned Tags']], on='Segment ID', how='left')
+Output is saved as:
+sample_data/Metrics_Tags_Clean.csv
+NLP Tag Cleaning and Topic Modeling
+Tags are preprocessed to remove channel-specific prefixes and normalize formatting.
+An LDA (Latent Dirichlet Allocation) model is trained on the cleaned tags to discover latent semantic topics (themes).
+lda = LatentDirichletAllocation(n_components=20, random_state=42)
+Each topic displays its top 10 most frequent words.
+Theme Classification
+A rule-based classifier assigns each content segment to one of several high-level themes (e.g., Info, Sport, Musique, etc.) based on keyword matching.
+theme_keywords = {
+    'Info': ['info', 'reportages', 'news', 'economie', 'monde'],
+    'Sport': ['sport', 'match', 'football', 'basket', 'tennis', 'rugby', 'athlétisme'],
+    ...
+}
+If no match is found, the theme is labeled as "Autre".
+Theme-Level Performance Metrics
+For each theme, aggregate performance indicators are computed:
+•	Num_Segments
+•	Media Views
+•	Visitors
+•	Returning Visits
+•	Bounces
+•	Total Play Duration (s)
+•	Avg Play Duration (s)
+•	New Visit Rate (%)
+Custom indices are calculated:
+•	Acquisition_Score
+•	Retention_Score
+•	Engagement_Score
+•	Normalized versions for comparison
+•	Priority_Score (weighted combination)
+Time Series Simulation
+A synthetic time series of visitors per theme is generated to visualize growth trends.
+dates = pd.date_range(start="2024-01-01", periods=12, freq='M')
+Visualization
+Two visualizations are generated:
+
+•	Matplotlib / Seaborn line chart for visitor evolution
+ 
+•	Dashboard using Power BI for dynamic exploration
+ 
