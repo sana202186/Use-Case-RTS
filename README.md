@@ -1,21 +1,21 @@
 # Use-Case-RTS
-Overview
+## Overview
 This project automates the cleaning, merging, semantic classification and analyisi of two datasets — one containing content metadata (Tags.csv) and another with performance metrics (Mesures.csv).
 Workflow Summary
-Data Loading
+## Data Loading
 Two CSV files are loaded:
 •	Mesures.csv → Contains performance data.
 •	Tags.csv → Contains descriptive metadata.
 metrics = pd.read_csv("sample_data/Mesures.csv", encoding="latin-1", sep=";")
 tags = pd.read_csv("sample_data/Tags.csv", encoding="latin-1", sep=";")
-Data Cleaning
+## Data Cleaning
 •	Removes leading/trailing spaces in column names and cell values.
 •	Drops empty rows.
 •	Standardizes Segment ID as string keys for merging.
 •	Converts percentage and time columns to numeric format:
 o	"New Visit Rate %" → float
 o	"Avg Play Duration" and "Total Play Duration" → seconds
-Merge Datasets
+## Merge Datasets
 The two datasets are merged using the unique key Segment ID.
 merged = pd.merge(metrics, tags[['Segment ID', 'Assigned Tags']], on='Segment ID', how='left')
 Output is saved as:
@@ -25,7 +25,7 @@ Tags are preprocessed to remove channel-specific prefixes and normalize formatti
 An LDA (Latent Dirichlet Allocation) model is trained on the cleaned tags to discover latent semantic topics (themes).
 lda = LatentDirichletAllocation(n_components=20, random_state=42)
 Each topic displays its top 10 most frequent words.
-Theme Classification
+## Theme Classification
 A rule-based classifier assigns each content segment to one of several high-level themes (e.g., Info, Sport, Musique, etc.) based on keyword matching.
 theme_keywords = {
     'Info': ['info', 'reportages', 'news', 'economie', 'monde'],
@@ -49,10 +49,8 @@ Custom indices are calculated:
 •	Engagement_Score
 •	Normalized versions for comparison
 •	Priority_Score (weighted combination)
-Time Series Simulation
-A synthetic time series of visitors per theme is generated to visualize growth trends.
-dates = pd.date_range(start="2024-01-01", periods=12, freq='M')
-Visualization
+## Data Visualization
+
 Two visualizations are generated:
 
 •	Matplotlib / Seaborn line chart for visitor evolution
