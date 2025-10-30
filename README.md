@@ -25,6 +25,8 @@ Tags are preprocessed to remove channel-specific prefixes and normalize formatti
 An LDA (Latent Dirichlet Allocation) model is trained on the cleaned tags to discover latent semantic topics (themes).
 lda = LatentDirichletAllocation(n_components=20, random_state=42)
 Each topic displays its top 10 most frequent words.
+## File generation
+Generate a file Theme_Metrics_Analysis with all metrics used in the dashboard Power BI
 ## Theme Classification
 A rule-based classifier assigns each content segment to one of several high-level themes (e.g., Info, Sport, Musique, etc.) based on keyword matching.
 theme_keywords = {
